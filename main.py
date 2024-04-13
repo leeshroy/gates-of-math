@@ -10,12 +10,10 @@ pygame.display.set_caption("Math 2D Game")
 
 white_color = (255,255,255)
 
-character = pygame.image.load('sus.png')
-grass = pygame.image.load('grass.png')
+character_image = pygame.image.load('sus.png')
+character = pygame.transform.scale(character_image, (100, 100))
 character_rect = character.get_rect()
-character_rect.center = (500, 600)
-
-character_move_amount = 10
+character_rect.center = (500, 650)
 
 move_left = False
 move_right = False
@@ -46,16 +44,16 @@ while not dead:
             elif event.key == pygame.K_DOWN:
                 move_down = False
 
-    if move_left:
+    if move_left and character_rect.left > 0:
         character_rect.x -= 1
-    if move_right:
+    if move_right and character_rect.right < width:
         character_rect.x += 1
-    if move_up:
+    if move_up and character_rect.top > 500:
         character_rect.y -= 1
-    if move_down:
+    if move_down and character_rect.bottom < height:
         character_rect.y += 1
 
-    game_display.blit(grass,(0,0))
+    game_display.fill(white_color)
     game_display.blit(character, character_rect)
     pygame.display.update()
 
