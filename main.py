@@ -10,44 +10,53 @@ pygame.display.set_caption("Math 2D Game")
 
 white_color = (255,255,255)
 
-dead = False
-
 character = pygame.image.load('sus.png')
 grass = pygame.image.load('grass.png')
+character_rect = character.get_rect()
+character_rect.center = (500, 600)
 
 character_move_amount = 10
-x_change = 0
 
-def add_character_at_location(x,y):
-    game_display.blit(character, (x,y))
+move_left = False
+move_right = False
+move_up = False
+move_down = False
 
-x = (width * 0.95)
-y = (height * 0.5)
-
-
-
-
+dead = False
 while not dead:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             dead = True
-        if event.type == pygame.KEYDOWN:
+        elif event.type == pygame.KEYDOWN:
             if event.key == pygame.K_LEFT:
-                x_change  -= character_move_amount
+                move_left = True
             elif event.key == pygame.K_RIGHT:
-                x_change += character_move_amount
+                move_right = True
             elif event.key == pygame.K_UP:
-                y -= character_move_amount
+                move_up = True
             elif event.key == pygame.K_DOWN:
-                y +- character_move_amount
+                move_down = True
+        elif event.type == pygame.KEYUP:
+            if event.key == pygame.K_LEFT:
+                move_left = False
+            elif event.key == pygame.K_RIGHT:
+                move_right = False
+            elif event.key == pygame.K_UP:
+                move_up = False
+            elif event.key == pygame.K_DOWN:
+                move_down = False
 
-
-    x += x_change
+    if move_left:
+        character_rect.x -= 1
+    if move_right:
+        character_rect.x += 1
+    if move_up:
+        character_rect.y -= 1
+    if move_down:
+        character_rect.y += 1
 
     game_display.blit(grass,(0,0))
-    add_character_at_location(-1000 + x,y)
+    game_display.blit(character, character_rect)
     pygame.display.update()
-
-
 
 pygame.quit()
