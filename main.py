@@ -1,4 +1,5 @@
 import pygame
+import random
 
 pygame.init()
 
@@ -96,9 +97,20 @@ while not dead:
 
     # checks for the collision of the gates and updates accordingly
     for gate in gates:
+        gate['rect'].y += 5  # Move the gate down every frame
+        if gate['rect'].y > height:
+            gate['rect'].y = random.randint(-100, -10)  # Reset to top with a random start above the screen
+            gate['active'] = True  # Re-enable the gate for collision detection
+            gate['reset'] = True  # Indicate that the gate has been reset
+
         if gate['active'] and character_rect.colliderect(gate['rect']):
             update_army_count(gate['effect'])
-            gate['active'] = False  # disable gate
+            gate['active'] = False  # Temporarily disable collision detection for this gate
+
+        # Re-enable collision detection if the gate has been reset and is moving down again
+        if gate['rect'].y > 0 and not gate['active'] and gate.get('reset', False):
+            gate['active'] = True
+            gate['reset'] = False  # Clear the reset flag now that the gate is active again
 
     # the total army count updated (top right)
     army_count_text = font.render(f"Army Count: {army_count}", True, red_color)
