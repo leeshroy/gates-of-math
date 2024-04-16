@@ -15,6 +15,8 @@ red_color = (255, 0, 0)
 
 # size of the army person
 character_image = pygame.image.load('sus.png')
+purple_character= pygame.image.load('purple.png')
+blue_character= pygame.image.load('blue.png')
 character = pygame.transform.scale(character_image, (60, 60))
 character_rect = character.get_rect(center=(width // 2, height - 75))
 
@@ -106,6 +108,11 @@ while not dead:
         if gate['active'] and character_rect.colliderect(gate['rect']):
             update_army_count(gate['effect'])
             gate['active'] = False  # Temporarily disable collision detection for this gate
+
+            if gate['effect'] == 2:
+                character = pygame.transform.scale(blue_character,(60,60))
+            elif gate['effect'] == 3: 
+                character = pygame.transform.scale(purple_character,(60,60))
 
         # Re-enable collision detection if the gate has been reset and is moving down again
         if gate['rect'].y > 0 and not gate['active'] and gate.get('reset', False):
