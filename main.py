@@ -13,24 +13,32 @@ pygame.display.set_caption("2D Math Game")
 white_color = (255, 255, 255)
 red_color = (255, 0, 0)
 
-# size of the army person
+# size and color of the army person
 character_image = pygame.image.load('sus.png')
 purple_character= pygame.image.load('purple.png')
 blue_character= pygame.image.load('blue.png')
+
 character = pygame.transform.scale(character_image, (60, 60))
+purple_character = pygame.transform.scale(purple_character, (60, 60))
+blue_character = pygame.transform.scale(blue_character, (60, 60))
 character_rect = character.get_rect(center=(width // 2, height - 75))
+
+color_mapping = { #assigns color based on specifed gate
+    2: blue_character,
+    3: purple_character
+}
 
 font = pygame.font.SysFont(None, 36)
 
 army_count = 1
-army = [character_rect.copy()]  # copies the starting army guy
+army = [{'image': character, 'rect': character_rect.copy(), 'color': character_image}] # copies the starting army guy
 
 # for updating the army count and their positions
 def update_army_count(count_change):
     global army_count
     army_count += count_change
     for _ in range(count_change):
-        army.append(character_rect.copy())
+        army.append({'image': character, 'rect':character_rect.copy(), 'color': character_image})
 
 # how the gates are setup (effect 2 and 3 mean +2 and +3)
 gate_width, gate_height = 150, 100
@@ -82,14 +90,12 @@ while not dead:
         character_rect.y += move_speed
 
     # position of army
-    for i, rect in enumerate(army):
-        rect.topleft = character_rect.topleft
-        rect.x += i * 50 - ((army_count - 1) * 25)  # how the army is spread out when added
+    for i, army_member in enumerate(army):
+        army_member['rect'].topleft = (character_rect.left + i * 50 - ((army_count - 1) * 25), character_rect.top) # how the army is spread out when added
 
     game_display.fill(white_color) # moved this from bottom so it doesn't cover over everything and so it is in background
-
-    for rect in army:
-        game_display.blit(character, rect.topleft)
+    for army_member in army:
+        game_display.blit(army_member['image'], army_member['rect'])
 
     # the actual gates
     for gate in gates:
@@ -108,11 +114,10 @@ while not dead:
         if gate['active'] and character_rect.colliderect(gate['rect']):
             update_army_count(gate['effect'])
             gate['active'] = False  # Temporarily disable collision detection for this gate
-
-            if gate['effect'] == 2:
-                character = pygame.transform.scale(blue_character,(60,60))
-            elif gate['effect'] == 3: 
-                character = pygame.transform.scale(purple_character,(60,60))
+            character_image = color_mapping.get(gate['effect'], character_image)  # Get the color for gate effect
+            character = pygame.transform.scale(character_image, (60, 60))  # Scale the character image
+            for _ in range(gate['effect']): #position of army
+                army.append({'image': character, 'rect': character_rect.copy(), 'color': character_image})
 
         # Re-enable collision detection if the gate has been reset and is moving down again
         if gate['rect'].y > 0 and not gate['active'] and gate.get('reset', False):
