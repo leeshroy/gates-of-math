@@ -1,5 +1,6 @@
 import pygame
 import random
+import math
 
 pygame.init()
 
@@ -26,7 +27,7 @@ character_rect = character.get_rect(center=(width // 2, height - 75))
 font = pygame.font.SysFont(None, 36)
 
 army_count = 1
-army = [{'image': character, 'rect': character_rect.copy(), 'color': character_image}] # copies the starting army guy
+army = [{'image': character, 'rect': character_rect.copy(),'angle':0}] # copies the starting army guy
 
 # for updating the army count and their positions
 def update_army_count(gate_effect):
@@ -36,13 +37,13 @@ def update_army_count(gate_effect):
         for _ in range(2):
             new_rect = character_rect.copy()
             new_rect.x = character_rect.left + i * 50 - ((army_count - 1) * 25)
-            army.append({'image': blue_character, 'rect': character_rect.copy(), 'color': blue_character})
+            army.append({'image': blue_character, 'rect': character_rect.copy(), 'color': blue_character, 'angle':(i+1) * (360 / 10)})
     elif gate_effect == 3:
         army_count += 3  # Increment army count by 3 for gate effect +3
         for _ in range(3):
             new_rect = character_rect.copy()
             new_rect.x = character_rect.left + i * 50 - ((army_count - 1) * 25)
-            army.append({'image': purple_character, 'rect': character_rect.copy(), 'color': purple_character})
+            army.append({'image': purple_character, 'rect': character_rect.copy(), 'color': purple_character, 'angle':(i+1) * (360 / 10)})
 # how the gates are setup (effect 2 and 3 mean +2 and +3)
 gate_width, gate_height = 150, 100
 gates = [
@@ -52,7 +53,7 @@ gates = [
 
 # flags
 move_left = move_right = move_up = move_down = False
-move_speed = 6  # speed of the movement of character (can adjust later)
+move_speed = 8  # speed of the movement of character (can adjust later)
 
 move_left = False
 move_right = False
@@ -94,11 +95,18 @@ while not dead:
 
     # position of army
     for i, army_member in enumerate(army):
-        army_member['rect'].topleft = (character_rect.left + i * 50 - ((army_count - 1) * 25), character_rect.top) # how the army is spread out when added
+        angle_step = 360 / len(army)
+        angle_rad = math.radians(army_member['angle'] + i * angle_step)
+        radius = 20 # Adjust the radius of the circle as needed
+        center_x = character_rect.centerx  
+        center_y = character_rect.centery
+        army_member['rect'] = character.get_rect(center=(center_x + int(radius * math.cos(angle_rad)), center_y + int(radius * math.sin(angle_rad))))
+        army_member['angle'] += 3 #changes the speed of the rotation for the army members
 
     game_display.fill(white_color) # moved this from bottom so it doesn't cover over everything and so it is in background
     for army_member in army:
         game_display.blit(army_member['image'], army_member['rect'])
+        game_display.blit(army[0]['image'], army[0]['rect'])
 
     # the actual gates
     for gate in gates:
