@@ -71,7 +71,10 @@ def options():
     while True:
         OPTIONS_MOUSE_POS = pygame.mouse.get_pos()
 
-        game_display.fill("white")
+        #game_display.fill("white")
+        game_display.blit(BG, (0, 0))
+
+
 
         OPTIONS_TEXT = get_font(45).render("This is the OPTIONS screen.", True, "Black")
         OPTIONS_RECT = OPTIONS_TEXT.get_rect(center=(640, 260))
@@ -115,7 +118,7 @@ def play():
 
     # for updating the army count and their positions
     def update_army_count(gate_effect):
-        global army_count
+        global army_count  # Refer to the global variable
         if gate_effect == 2:
             army_count += 2  # Increment army count by 2 for gate effect +2
             for _ in range(2):
