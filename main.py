@@ -49,7 +49,7 @@ def main_menu():
         for button in [PLAY_BUTTON, OPTIONS_BUTTON, QUIT_BUTTON]:
             button.changeColor(MENU_MOUSE_POS)
             button.update(game_display)
-        
+
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
@@ -97,6 +97,40 @@ def options():
 
         pygame.display.update()
 
+def createGates():
+    font = pygame.font.SysFont(None, 36)
+    problemSet = createMathProblems.createProblemSet()
+    answerSet = createMathProblems.createAnswerSet(problemSet)
+
+    # how the gates are setup (effect 2 and 3 mean +2 and +3)
+    gate_width, gate_height = 150, 100
+    gates = [
+        {'rect': pygame.Rect((width // 2) - (1.5 * gate_width), (height - gate_height) // 2, gate_width, gate_height), 'effect': answerSet[0], 'active': True, 'collided': False},
+        {'rect': pygame.Rect((width // 2) + (0.5 * gate_width), (height - gate_height) // 2, gate_width, gate_height), 'effect': answerSet[1], 'active': True, 'collided': False}
+    ]
+    
+    # the actual gates
+    for gate in gates:
+        pygame.draw.rect(game_display, red_color, gate['rect'])
+        effect_text = font.render(f"+{gate['effect']}", True, white_color)
+        game_display.blit(effect_text, gate['rect'].center)
+
+    # checks for the collision of the gates and updates accordingly
+    for gate in gates:
+        gate['rect'].y += 5  # Move the gate down every frame
+        if gate['rect'].y > height:
+            gate['rect'].y = random.randint(-100, -10)  # Reset to top with a random start above the screen
+            gate['active'] = True  # Re-enable the gate for collision detection
+            gate['collided']= False  #reset the collison flag
+
+        if gate['active'] and character_rect.colliderect(gate['rect']) and not gate['collided']:
+            update_army_count(gate['effect'])
+            gate['collided'] = True  #set the collision flag
+
+        # Re-enable collision detection if the gate has been reset and is moving down again
+        if gate['rect'].y > 0 and not gate['active'] and gate.get('reset', False):
+            gate['active'] = True
+            gate['reset'] = False  # Clear the reset flag now that the gate is active again
 
 def play():
     # white for background, red for gates and army count to right
@@ -116,17 +150,8 @@ def play():
     font = pygame.font.SysFont(None, 36)
 
     army = [{'image': character, 'rect': character_rect.copy(),'angle':0}] # copies the starting army guy
-
-    problemSet = createMathProblems.createProblemSet()
-    answerSet = createMathProblems.createAnswerSet(problemSet)
-
-    # how the gates are setup (effect 2 and 3 mean +2 and +3)
-    gate_width, gate_height = 150, 100
-    gates = [
-        {'rect': pygame.Rect((width // 2) - (1.5 * gate_width), (height - gate_height) // 2, gate_width, gate_height), 'effect': answerSet[0], 'active': True, 'collided': False},
-        {'rect': pygame.Rect((width // 2) + (0.5 * gate_width), (height - gate_height) // 2, gate_width, gate_height), 'effect': answerSet[1], 'active': True, 'collided': False}
-    ]
-
+    createGates()
+    
     # for updating the army count and their positions
     def update_army_count(gate_effect):
         global army_count  # Refer to the global variable
@@ -188,35 +213,12 @@ def play():
             army_member['rect'] = character.get_rect(center=(center_x + int(radius * math.cos(angle_rad)), center_y + int(radius * math.sin(angle_rad))))
             army_member['angle'] += 3 #changes the speed of the rotation for the army members
 
-        
+
         game_display.blit(mainBG, (0, 0))
         #game_display.fill(white_color) # moved this from bottom so it doesn't cover over everything and so it is in background
         for army_member in army:
             game_display.blit(army_member['image'], army_member['rect'])
             game_display.blit(army[0]['image'], army[0]['rect'])
-
-        # the actual gates
-        for gate in gates:
-            pygame.draw.rect(game_display, red_color, gate['rect'])
-            effect_text = font.render(f"+{gate['effect']}", True, white_color)
-            game_display.blit(effect_text, gate['rect'].center)
-
-        # checks for the collision of the gates and updates accordingly
-        for gate in gates:
-            gate['rect'].y += 5  # Move the gate down every frame
-            if gate['rect'].y > height:
-                gate['rect'].y = random.randint(-100, -10)  # Reset to top with a random start above the screen
-                gate['active'] = True  # Re-enable the gate for collision detection
-                gate['collided']= False  #reset the collison flag
-
-            if gate['active'] and character_rect.colliderect(gate['rect']) and not gate['collided']:
-                update_army_count(gate['effect'])
-                gate['collided'] = True  #set the collision flag
-
-            # Re-enable collision detection if the gate has been reset and is moving down again
-            if gate['rect'].y > 0 and not gate['active'] and gate.get('reset', False):
-                gate['active'] = True
-                gate['reset'] = False  # Clear the reset flag now that the gate is active again
 
         # the total army count updated (top right)
         army_count_text = font.render(f"Army Count: {army_count}", True, red_color)
