@@ -2,6 +2,7 @@ import pygame
 import random
 import math
 import sys
+import createMathProblems
 
 from button import Button
 
@@ -116,27 +117,24 @@ def play():
 
     army = [{'image': character, 'rect': character_rect.copy(),'angle':0}] # copies the starting army guy
 
-    # for updating the army count and their positions
-    def update_army_count(gate_effect):
-        global army_count  # Refer to the global variable
-        if gate_effect == 2:
-            army_count += 2  # Increment army count by 2 for gate effect +2
-            for _ in range(2):
-                new_rect = character_rect.copy()
-                new_rect.x = character_rect.left + i * 50 - ((army_count - 1) * 25)
-                army.append({'image': blue_character, 'rect': character_rect.copy(), 'color': blue_character, 'angle':(i+1) * (360 / 10)})
-        elif gate_effect == 3:
-            army_count += 3  # Increment army count by 3 for gate effect +3
-            for _ in range(3):
-                new_rect = character_rect.copy()
-                new_rect.x = character_rect.left + i * 50 - ((army_count - 1) * 25)
-                army.append({'image': purple_character, 'rect': character_rect.copy(), 'color': purple_character, 'angle':(i+1) * (360 / 10)})
+    problemSet = createMathProblems.createProblemSet()
+    answerSet = createMathProblems.createAnswerSet(problemSet)
+
     # how the gates are setup (effect 2 and 3 mean +2 and +3)
     gate_width, gate_height = 150, 100
     gates = [
-        {'rect': pygame.Rect((width // 2) - (1.5 * gate_width), (height - gate_height) // 2, gate_width, gate_height), 'effect': 2, 'active': True, 'collided': False},
-        {'rect': pygame.Rect((width // 2) + (0.5 * gate_width), (height - gate_height) // 2, gate_width, gate_height), 'effect': 3, 'active': True, 'collided': False}
+        {'rect': pygame.Rect((width // 2) - (1.5 * gate_width), (height - gate_height) // 2, gate_width, gate_height), 'effect': answerSet[0], 'active': True, 'collided': False},
+        {'rect': pygame.Rect((width // 2) + (0.5 * gate_width), (height - gate_height) // 2, gate_width, gate_height), 'effect': answerSet[1], 'active': True, 'collided': False}
     ]
+
+    # for updating the army count and their positions
+    def update_army_count(gate_effect):
+        global army_count  # Refer to the global variable
+        army_count += gate_effect  # Increment army count by 2 for gate effect +2
+        for _ in range(gate_effect):
+            new_rect = character_rect.copy()
+            new_rect.x = character_rect.left + i * 50 - ((army_count - 1) * 25)
+            army.append({'image': blue_character, 'rect': character_rect.copy(), 'color': blue_character, 'angle':(i+1) * (360 / 10)})
 
     # flags
     move_left = move_right = move_up = move_down = False
