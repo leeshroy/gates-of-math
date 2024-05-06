@@ -10,8 +10,8 @@ def createProblemSet():
   randomOperation = ""
   operations = difficultyCheck()
   if difficulty != 0:
-    numberSet.append(random.randint(0, 10))
-    numberSet.append(random.randint(0, 10))
+    numberSet.append(str(random.randint(0, 10)))
+    numberSet.append(str(random.randint(0, 10)))
     numberSet.sort()
     randomOperation = operations[random.randint(0, difficulty)]
     problemSet.append(numberSet[1] + " " + randomOperation + " " + numberSet[0])
