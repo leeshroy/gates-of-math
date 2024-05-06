@@ -13,6 +13,14 @@ height = 720
 game_display = pygame.display.set_mode((width, height))
 pygame.display.set_caption("2D Math Game")
 BG = pygame.image.load("assets/Background.png")
+mainBG = pygame.image.load("assets/main.png")
+mainmusic = "assets/sus.mp3"
+exitsus = "assets/exitsus.mp3"
+
+pygame.mixer.init()
+pygame.mixer.music.load(mainmusic)
+pygame.mixer.music.play()
+pygame.event.wait()
 
 def get_font(size): # Returns Press-Start-2P in the desired size
     return pygame.font.Font("assets/font.ttf", size)
@@ -51,6 +59,9 @@ def main_menu():
                 if OPTIONS_BUTTON.checkForInput(MENU_MOUSE_POS):
                     options()
                 if QUIT_BUTTON.checkForInput(MENU_MOUSE_POS):
+                    pygame.mixer.music.load(exitsus)
+                    pygame.mixer.music.play()
+                    pygame.mixer.wait()
                     pygame.quit()
                     sys.exit()
 
@@ -176,7 +187,9 @@ def play():
             army_member['rect'] = character.get_rect(center=(center_x + int(radius * math.cos(angle_rad)), center_y + int(radius * math.sin(angle_rad))))
             army_member['angle'] += 3 #changes the speed of the rotation for the army members
 
-        game_display.fill(white_color) # moved this from bottom so it doesn't cover over everything and so it is in background
+        
+        game_display.blit(mainBG, (0, 0))
+        #game_display.fill(white_color) # moved this from bottom so it doesn't cover over everything and so it is in background
         for army_member in army:
             game_display.blit(army_member['image'], army_member['rect'])
             game_display.blit(army[0]['image'], army[0]['rect'])
