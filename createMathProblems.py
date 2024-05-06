@@ -38,13 +38,12 @@ def difficultyCheck():
 
 # playerAnswer must be bool of 0 or 1, depending on which gate is taken
 # left = 0, right = 1
-def createAnswerSet(playerAnswer, problemSet):
+def createAnswerSet(problemSet):
   # will return if player picked correct answer along with the answers for the two problems
   # correct = 0, incorrect = 1
   answerOne = eval(problemSet[0])
   answerTwo = eval(problemSet[1])
-  isCorrect = playerAnswer == answerOne <= answerTwo
-  answerSet = [answerOne, answerTwo, isCorrect]
+  answerSet = [answerOne, answerTwo]
   return answerSet
 
 # takes the questions and gates, returns the value of the gate chosen
@@ -52,9 +51,11 @@ def checkAnswer(problemSet, gates):
   # create line to check player answer
   global streak
   global difficulty
-  playerAnswer = gates[0]['collided']
-  answerSet = createAnswerSet(playerAnswer, problemSet)
-  isCorrect = answerSet[2]
+  # if right gate is collided, returns 1, and if left gate is collided, returns 0
+  playerAnswer = gates[1]['collided']
+  answerSet = createAnswerSet(problemSet)
+  # evaluates which is bigger, if left, 0, if right, 1, then checks against player answer
+  isCorrect = playerAnswer == (answerSet[0] <= answerSet[1])
   playerGate = answerSet[playerAnswer]
   if isCorrect:
     streak += 1
