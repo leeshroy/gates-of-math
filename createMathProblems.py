@@ -16,14 +16,14 @@ def createProblemSet():
     randomOperation = operations[random.randint(0, difficulty)]
     problemSet.append(numberSet[1] + " " + randomOperation + " " + numberSet[0])
     numberSet = []
-    numberSet.append(random.randint(0, 10))
-    numberSet.append(random.randint(0, 10))
+    numberSet.append(str(random.randint(0, 10)))
+    numberSet.append(str(random.randint(0, 10)))
     numberSet.sort()
     randomOperation = operations[random.randint(0, difficulty)]
     problemSet.append(numberSet[1] + " " + randomOperation + " " + numberSet[0])
   else:
-    problemSet.append(random.randint(0, 10))
-    problemSet.append(random.randint(0, 10))
+    problemSet.append(str(random.randint(0, 10)))
+    problemSet.append(str(random.randint(0, 10)))
   return problemSet
   
 def difficultyCheck():
