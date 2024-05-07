@@ -99,6 +99,8 @@ def options():
 
 def createGates():
     font = pygame.font.SysFont(None, 36)
+    white_color = (255, 255, 255)
+    red_color = (255, 0, 0)
     problemSet = createMathProblems.createProblemSet()
     answerSet = createMathProblems.createAnswerSet(problemSet)
 
