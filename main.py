@@ -101,6 +101,17 @@ def createGates():
     font = pygame.font.SysFont(None, 36)
     white_color = (255, 255, 255)
     red_color = (255, 0, 0)
+
+    # size and color of the army person
+    character_image = pygame.image.load('sus.png')
+    purple_character= pygame.image.load('purple.png')
+    blue_character= pygame.image.load('blue.png')
+
+    character = pygame.transform.scale(character_image, (60, 60))
+    purple_character = pygame.transform.scale(purple_character, (60, 60))
+    blue_character = pygame.transform.scale(blue_character, (60, 60))
+    character_rect = character.get_rect(center=(width // 2, height - 75))
+    
     problemSet = createMathProblems.createProblemSet()
     answerSet = createMathProblems.createAnswerSet(problemSet)
 
