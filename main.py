@@ -60,9 +60,10 @@ def main_menu():
                 if OPTIONS_BUTTON.checkForInput(MENU_MOUSE_POS):
                     options()
                 if QUIT_BUTTON.checkForInput(MENU_MOUSE_POS):
-                    pygame.mixer.music.load(exitsus)
-                    pygame.mixer.music.play()
-                    pygame.mixer.wait()
+                    pygame.mixer.music.load("assets/exitsus.mp3")  # Load the exit music
+                    pygame.mixer.music.play()  # Play the exit music
+                    while pygame.mixer.music.get_busy():  # Wait for the music to finish
+                        pygame.time.Clock().tick(10)
                     pygame.quit()
                     sys.exit()
 
@@ -131,11 +132,15 @@ def play():
     def update_army_count(gate_effect):
         global army_count  # Refer to the global variable
         army_count += gate_effect  # Increment army count by 2 for gate effect +2
+        
+        if army_count <= 0:
+            return True
+        
         for _ in range(gate_effect):
             new_rect = character_rect.copy()
             new_rect.x = character_rect.left + i * 50 - ((army_count - 1) * 25)
             army.append({'image': blue_character, 'rect': character_rect.copy(), 'color': blue_character, 'angle':(i+1) * (360 / 10)})
-
+        return False
     # flags
     move_left = move_right = move_up = move_down = False
     move_speed = 8  # speed of the movement of character (can adjust later)
@@ -177,6 +182,7 @@ def play():
             character_rect.y -= move_speed
         if move_down and character_rect.bottom < height:
             character_rect.y += move_speed
+            
 
         # position of army
         for i, army_member in enumerate(army):
@@ -198,7 +204,8 @@ def play():
         # the actual gates
         for gate in gates:
             pygame.draw.rect(game_display, red_color, gate['rect'])
-            effect_text = font.render(f"+{gate['effect']}", True, white_color)
+            effect_sign = "+" if gate['effect'] >= 0 else ""
+            effect_text = font.render(f"{effect_sign}{gate['effect']}", True, white_color)
             game_display.blit(effect_text, gate['rect'].center)
 
         # checks for the collision of the gates and updates accordingly
@@ -222,6 +229,14 @@ def play():
             if gate['rect'].y > 0 and not gate['active'] and gate.get('reset', False):
                 gate['active'] = True
                 gate['reset'] = False  # Clear the reset flag now that the gate is active again
+
+        # Check for end game condition
+        if army_count <= 0:
+            pygame.mixer.music.load('assets/exitsus.mp3')
+            pygame.mixer.music.play()
+            while pygame.mixer.music.get_busy():  # Wait for the music to finish
+                pygame.time.Clock().tick(10)
+            dead = True  # Set dead to True to end the loop
 
         # the total army count updated (top right)
         army_count_text = font.render(f"Army Count: {army_count}", True, red_color)
