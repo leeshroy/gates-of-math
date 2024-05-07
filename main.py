@@ -229,9 +229,4 @@ def play():
 
         pygame.display.flip()
 
-        pygame.time.Clock().tick(60)
-
-
-main_menu()
-
-pygame.quit()
+        pygame.time.Clock().tick(6
