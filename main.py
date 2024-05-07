@@ -185,6 +185,7 @@ def play():
 
     dead = False
     while not dead:
+        createGates()
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 dead = True
